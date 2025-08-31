@@ -1,46 +1,79 @@
-#LinkedIn Lead Generation Automation with n8n
-This project is an automated workflow built using the low-code platform n8n to perform targeted lead generation from LinkedIn. The system executes a detailed search, intelligently parses the results, cleans the data, and populates a Google Sheet with a structured list of potential leads, including their name, job title, company, and LinkedIn profile URL.
+# LinkedIn Lead Generation Automation with n8n
 
-Workflow Diagram
-The diagram above illustrates the complete n8n workflow, from the manual trigger and HTTP search request to the data parsing, conditional logic, and final output to a Google Sheet.
+An automated workflow built using the low-code platform **[n8n](https://n8n.io/)** to perform **targeted lead generation from LinkedIn**.  
+The system executes a detailed search, parses results, cleans the data, and stores potential leads in **Google Sheets**, including:
 
-Key Features
-Targeted Search: Utilizes an HTTP Request node to query a search engine API with specific criteria for job titles, industries, and company sizes.
+- **Name**
+- **Job Title**
+- **Company**
+- **LinkedIn Profile URL**
 
-Robust Data Parsing: Employs a sophisticated JavaScript function to intelligently parse unstructured and inconsistent titles from search results to reliably extract key information.
+---
 
-Advanced Exception Handling: The parsing logic is designed to handle numerous edge cases, such as varied title formats (e.g., "Job Title at Company," "Job Title, Company"), extra punctuation, and missing data points.
+## 🚀 Workflow Overview
 
-Automated Data Cleaning: Automatically cleans and structures the extracted data into a consistent format, ensuring the final output is clean and usable.
+<img width="935" height="383" alt="image" src="https://github.com/user-attachments/assets/50be8189-7da5-461d-a046-09415f274063" />
 
-Google Sheets Integration: Seamlessly appends the structured lead data into a designated Google Sheet, creating an organized and actionable database.
 
-How It Works
-The entire process is orchestrated within a single n8n workflow:
+The workflow includes:
 
-Manual Trigger: The workflow is initiated on-demand with a manual trigger.
+1. **Manual Trigger** → Initiates the workflow on demand.  
+2. **HTTP Request** → Queries a search engine API (e.g., SerpApi, ScraperAPI) for LinkedIn profiles matching search criteria.  
+3. **Data Processing (JavaScript Expression)** →  
+   - Iterates through search results.  
+   - Validates LinkedIn profile URLs.  
+   - Cleans and parses job titles using a custom `parseLinkedInTitle` function.  
+   - Extracts `Name`, `Job Title`, and `Company`.  
+   - Handles exceptions gracefully.  
+4. **Google Sheets Node** → Appends structured lead data into a designated Google Sheet.
 
-HTTP Request: The first node sends a precisely crafted search query (e.g., site:linkedin.com/in ("Marketing Manager") ("Computer Software")) to a search engine API like SerpApi to fetch a list of relevant LinkedIn profiles.
+---
 
-Data Processing (Code Expression): The raw JSON response from the API is then passed to the Google Sheets node. A powerful JavaScript expression embedded within this node performs the following actions:
+## ✨ Key Features
 
-It iterates through each search result.
+- **🎯 Targeted Search**  
+  Queries LinkedIn profiles filtered by job titles, industries, and company size.  
 
-It identifies valid LinkedIn profile links.
+- **🧩 Robust Data Parsing**  
+  Extracts clean, structured data from messy/unstructured titles.  
 
-A custom parseLinkedInTitle function cleans the messy title string and intelligently extracts the Name, Job Title, and Company by testing for common separators like " at " and ",".
+- **⚡ Exception Handling**  
+  Handles edge cases (e.g., `"Title at Company"`, `"Title, Company"`, missing data).  
 
-It handles exceptions gracefully, ensuring that malformed results do not crash the workflow.
+- **🧹 Automated Data Cleaning**  
+  Ensures consistent and usable final output.  
 
-Output to Google Sheets: The final, structured array of lead data is directly passed to the Google Sheets "Append Row" operation. The node then automatically adds each lead as a new row in the specified spreadsheet.
+- **📊 Google Sheets Integration**  
+  Appends each lead into a structured spreadsheet.  
 
-Technology Stack
-Core Automation: n8n.io
+---
 
-Data Source: A search engine API (e.g., SerpApi, ScraperAPI)
+## 🛠️ Technology Stack
 
-Data Storage: Google Sheets
+- **Core Automation** → [n8n.io](https://n8n.io/)  
+- **Data Source** → Search engine API (e.g., [SerpApi](https://serpapi.com/), [ScraperAPI](https://www.scraperapi.com/))  
+- **Data Storage** → Google Sheets  
+- **Core Logic** → JavaScript (ES6)  
 
-Core Logic: JavaScript (ES6)
+---
 
-This project serves as a powerful example of how low-code platforms can be extended with custom code to create sophisticated and reliable automation solutions for business-critical tasks like lead generation.
+## ⚙️ How It Works
+
+1. **Trigger Workflow**  
+   - Run the workflow manually inside n8n.  
+
+2. **Fetch Data**  
+   - The HTTP Request node sends queries like:  
+     ```plaintext
+     site:linkedin.com/in ("Marketing Manager") ("Computer Software")
+     ```
+
+3. **Parse Results**  
+   - Extracts and validates LinkedIn profile data.  
+   - Uses `parseLinkedInTitle` function to split raw titles into **Name | Job Title | Company**.  
+
+4. **Store Leads**  
+   - Appends the cleaned results into Google Sheets.  
+
+
+
