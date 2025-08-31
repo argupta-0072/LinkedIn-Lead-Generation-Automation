@@ -1,178 +1,47 @@
 # LinkedIn Lead Generation Automation
+<img width="1869" height="765" alt="image" src="https://github.com/user-attachments/assets/f3b36c24-f880-4cba-beca-
 
-![Project Banner/Image]([<img width="1869" height="765" alt="image" src="https://github.com/user-attachments/assets/f3b36c24-f880-4cba-beca-e20055b37d16" />
-])
+LinkedIn Lead Generation Automation with n8n
+This project is an automated workflow built using the low-code platform n8n to perform targeted lead generation from LinkedIn. The system executes a detailed search, intelligently parses the results, cleans the data, and populates a Google Sheet with a structured list of potential leads, including their name, job title, company, and LinkedIn profile URL.
 
-A Python-based automation script designed to streamline the lead generation process on LinkedIn. This tool automates searching for profiles, sending connection requests with personalized messages, and exporting lead data, saving hours of manual work for sales and marketing professionals.
+Key Features
+Targeted Search: Utilizes an HTTP Request node to query a search engine API with specific criteria for job titles, industries, and company sizes.
 
----
+Robust Data Parsing: Employs a sophisticated JavaScript function to intelligently parse unstructured and inconsistent titles from search results to reliably extract key information.
 
-## 📜 Table of Contents
+Advanced Exception Handling: The parsing logic is designed to handle numerous edge cases, such as varied title formats (e.g., "Job Title at Company," "Job Title, Company"), extra punctuation, and missing data points.
 
-- [Overview](#-overview)
-- [Key Features](#-key-features)
-- [How It Works](#-how-it-works)
-- [Tech Stack](#-tech-stack)
-- [⚠️ Disclaimer](#️-disclaimer)
-- [Setup & Installation](#-setup--installation)
-- [Usage](#-usage)
-- [Configuration](#-configuration)
-- [Future Improvements](#-future-improvements)
-- [Contributing](#-contributing)
-- [License](#-license)
+Automated Data Cleaning: Automatically cleans and structures the extracted data into a consistent format, ensuring the final output is clean and usable.
 
----
+Google Sheets Integration: Seamlessly appends the structured lead data into a designated Google Sheet, creating an organized and actionable database.
 
-## 📖 Overview
+How It Works
+The entire process is orchestrated within a single n8n workflow:
 
-Manually searching, connecting, and messaging potential leads on LinkedIn is a repetitive and time-consuming task. This project was created to automate these actions in a human-like manner to avoid detection. The script leverages Selenium to control a web browser, navigating LinkedIn's interface to perform tasks based on user-defined search criteria.
+Manual Trigger: The workflow is initiated on-demand with a manual trigger.
 
-**The primary goal is to build a targeted lead list efficiently, allowing you to focus on building relationships rather than on manual prospecting.**
+HTTP Request: The first node sends a precisely crafted search query (e.g., site:linkedin.com/in ("Marketing Manager") ("Computer Software")) to a search engine API like SerpApi to fetch a list of relevant LinkedIn profiles.
 
----
+Data Processing (Code Expression): The raw JSON response from the API is then passed to the Google Sheets node. A powerful JavaScript expression embedded within this node performs the following actions:
 
-## ✨ Key Features
+It iterates through each search result.
 
-- **🎯 Targeted Search:** Automatically searches for profiles based on keywords like job title, company, industry, and location.
-- **🤝 Automated Connections:** Sends personalized connection requests. You can use message templates with placeholders (e.g., `{firstName}`, `{jobTitle}`) for a personal touch.
-- ** scrapping Profile Scraping:** Extracts key information from profiles, such as name, job title, company, and location.
-- **✍️ Automated Messaging:** Sends customized follow-up messages to new connections after a specified delay.
-- **📊 Data Export:** Saves all collected lead data into a structured format (e.g., CSV or Excel) for easy integration with CRM systems or further analysis.
-- **⚙️ Configurable & Customizable:** Easily configure search parameters, message templates, and automation speed through a simple config file.
-- **🧠 Human-like Behavior:** Incorporates random delays and realistic actions to minimize the risk of account suspension.
+It identifies valid LinkedIn profile links.
 
----
+A custom parseLinkedInTitle function cleans the messy title string and intelligently extracts the Name, Job Title, and Company by testing for common separators like " at " and ",".
 
-## 🔧 How It Works
+It handles exceptions gracefully, ensuring that malformed results do not crash the workflow.
 
-The script operates by launching a browser instance controlled by **Selenium WebDriver**. It then performs the following steps:
+Output to Google Sheets: The final, structured array of lead data is directly passed to the Google Sheets "Append Row" operation. The node then automatically adds each lead as a new row in the specified spreadsheet.
 
-1.  **Login:** Securely logs into your LinkedIn account using credentials stored in an environment file.
-2.  **Search:** Navigates to the search page and inputs the criteria defined in the configuration file.
-3.  **Iterate & Connect:** Scans through the search results, page by page. For each profile that is not yet a connection, it visits the profile, clicks the "Connect" button, and pastes a personalized message.
-4.  **Data Extraction:** As it processes each profile, it scrapes relevant data.
-5.  **Save Progress:** The collected data is appended to a CSV file in real-time.
-6.  **Logout & Close:** Once the process is complete or the target number of connections is sent, it safely logs out and closes the browser.
+Technology Stack
+Core Automation: n8n.io
 
----
+Data Source: A search engine API (e.g., SerpApi, ScraperAPI)
 
-## 💻 Tech Stack
+Data Storage: Google Sheets
 
-- **Language:** Python 3.x
-- **Automation/Scraping:** Selenium
-- **Data Handling:** Pandas
-- **Configuration Management:** JSON / YAML
-- **Environment Variables:** `python-dotenv`
+Core Logic: JavaScript (ES6)
 
----
+This project serves as a powerful example of how low-code platforms can be extended with custom code to create sophisticated and reliable automation solutions for business-critical tasks like lead generation.
 
-## ⚠️ Disclaimer
-
-This script is intended for educational and research purposes only. Automating interactions on LinkedIn is against their User Agreement and can result in a temporary or permanent ban of your account. **Use this tool at your own risk.**
-
-The developers of this project are not responsible for any consequences of its use. It is highly recommended to use this script with a test account and to implement conservative settings (long delays, limited daily actions) to minimize risk.
-
----
-
-## 🚀 Setup & Installation
-
-Follow these steps to get the project up and running on your local machine.
-
-**Prerequisites:**
-- Python 3.8+
-- Google Chrome (or another supported browser)
-- Git
-
-**1. Clone the Repository:**
-```bash
-git clone [https://github.com/](https://github.com/)[YourUsername]/[YourRepoName].git
-cd [YourRepoName]
-```
-
-**2. Create a Virtual Environment:**
-It's recommended to use a virtual environment to manage dependencies.
-```bash
-# For Windows
-python -m venv venv
-venv\Scripts\activate
-
-# For macOS/Linux
-python3 -m venv venv
-source venv/bin/activate
-```
-
-**3. Install Dependencies:**
-```bash
-pip install -r requirements.txt
-```
-
-**4. Download WebDriver:**
-Download the appropriate [WebDriver](https://www.selenium.dev/documentation/webdriver/getting_started/install_drivers/) for your browser (e.g., ChromeDriver for Google Chrome) and place it in the project's root directory or ensure it's in your system's PATH.
-
-**5. Configure Environment Variables:**
-Create a `.env` file in the root directory by copying the example file:
-```bash
-cp .env.example .env
-```
-Now, open the `.env` file and add your LinkedIn credentials:
-```
-LINKEDIN_EMAIL="your_email@example.com"
-LINKEDIN_PASSWORD="your_super_secret_password"
-```
-
----
-
-## 🏃 Usage
-
-Once the setup is complete, you can run the script from the terminal.
-
-**1. Customize Configuration:**
-Open `config.json` (or your config file) and set your search parameters and message templates.
-```json
-{
-  "search_keywords": "Software Engineer in Test",
-  "location": "India",
-  "connection_message": "Hi {firstName}, I came across your profile and was impressed by your experience at {companyName}. I'd love to connect and learn more about your work.",
-  "max_connections_to_send": 50
-}
-```
-
-**2. Run the Main Script:**
-```bash
-python main.py
-```
-The script will now launch the browser and begin the automation process. You can watch its progress in the terminal.
-
----
-
-## 🛠️ Configuration
-
-The `config.json` file allows you to control the bot's behavior without editing the code. Key parameters include:
-
-- `search_keywords`: The job title or keywords to search for.
-- `location`: The geographical location to target.
-- `connection_message`: The template for your connection request message.
-- `max_connections_to_send`: A limit to prevent sending too many requests in one session.
-- `delay_settings`: Min/max values for random delays between actions.
-
----
-
-## 🔮 Future Improvements
-
-- [ ] **GUI Implementation:** Develop a simple graphical user interface using Tkinter or PyQT for easier use by non-developers.
-- [ ] **Proxy Support:** Add proxy rotation to reduce the risk of IP-based blocking.
-- [ ] **Advanced AI Messaging:** Integrate a language model (like GPT) to generate more dynamic and context-aware messages.
-- [ ] **Dashboard:** Create a simple dashboard to visualize collected lead data and automation stats.
-- [ ] **Dockerization:** Package the application into a Docker container for easy deployment.
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! If you have ideas for new features or improvements, feel free to fork the repository, make your changes, and submit a pull request. Please create an issue first to discuss the proposed changes.
-
----
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
