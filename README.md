@@ -1,8 +1,8 @@
-# LinkedIn Lead Generation Automation
-<img width="1869" height="765" alt="image" src="https://github.com/user-attachments/assets/f3b36c24-f880-4cba-beca-
-
-LinkedIn Lead Generation Automation with n8n
+#LinkedIn Lead Generation Automation with n8n
 This project is an automated workflow built using the low-code platform n8n to perform targeted lead generation from LinkedIn. The system executes a detailed search, intelligently parses the results, cleans the data, and populates a Google Sheet with a structured list of potential leads, including their name, job title, company, and LinkedIn profile URL.
+
+Workflow Diagram
+The diagram above illustrates the complete n8n workflow, from the manual trigger and HTTP search request to the data parsing, conditional logic, and final output to a Google Sheet.
 
 Key Features
 Targeted Search: Utilizes an HTTP Request node to query a search engine API with specific criteria for job titles, industries, and company sizes.
@@ -44,4 +44,3 @@ Data Storage: Google Sheets
 Core Logic: JavaScript (ES6)
 
 This project serves as a powerful example of how low-code platforms can be extended with custom code to create sophisticated and reliable automation solutions for business-critical tasks like lead generation.
-
