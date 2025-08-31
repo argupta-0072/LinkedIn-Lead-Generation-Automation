@@ -1,0 +1,358 @@
+{
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        80
+      ],
+      "id": "3fcf3a02-a55b-430d-be38-857758a84048",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "engine",
+              "value": "google"
+            },
+            {
+              "name": "q",
+              "value": "site:linkedin.com/in (\"Marketing Manager\" OR \"Director of Marketing\") (\"Computer Software\" OR \"Information Technology and Services\") \"50-200 employees\""
+            },
+            {
+              "name": "api_key",
+              "value": "43ba70ec035717dab9c77fc76ea7789fe8e064e57a890eba8ac6e403208bf01d"
+            },
+            {
+              "name": "num",
+              "value": "20"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        80
+      ],
+      "id": "52d6fddc-53df-4a3e-8ca3-5c05521ea785",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "// This code should be placed in the \"Values to Send\" field of the Google Sheets node\n// after clicking \"Add Expression\".\n// It will process the incoming data and format it correctly for the sheet.\n\nconst items = $input.all();\nconst rows = [];\n\nfor (const item of items) {\n  const searchResults = item.json.organic_results;\n  if (!searchResults || !Array.isArray(searchResults)) continue;\n\n  for (const result of searchResults) {\n    try {\n      if (result.link && result.link.includes('linkedin.com/in/')) {\n        let name = '';\n        let jobTitle = '';\n        let company = '';\n        const linkedInUrl = result.link;\n\n        const cleanTitle = result.title.split('|')[0].trim();\n        const parts = cleanTitle.split(' - ').map(p => p.trim());\n\n        if (parts.length > 0) {\n          name = parts[0];\n        }\n\n        if (parts.length > 1) {\n          const descriptionPart = parts[1];\n          const atParts = descriptionPart.split(' at ');\n          if (atParts.length > 1) {\n            jobTitle = atParts[0].trim();\n            company = atParts.slice(1).join(' at ').trim();\n          } else {\n            const commaParts = descriptionPart.split(',');\n            if (commaParts.length > 1) {\n              jobTitle = commaParts[0].trim();\n              company = commaParts.slice(1).join(',').trim();\n            } else {\n              jobTitle = descriptionPart;\n              if (parts.length > 2) {\n                company = parts[2];\n              }\n            }\n          }\n        }\n        \n        // Only add the row if all key fields have been found.\n        if (name && jobTitle && company) {\n          rows.push({\n            'Name': name,\n            'Job Title': jobTitle,\n            'Company': company,\n            'Linkeden': linkedInUrl\n          });\n        }\n      }\n    } catch (error) {\n      // Ignore errors for single results and continue processing\n      continue;\n    }\n  }\n}\n\nreturn rows;\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        80
+      ],
+      "id": "2e3fd4c5-427b-4c67-a542-dcddaa64a6f9",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1-8mqlWDUX-hzxg6ZH4qDm-lfSdKmW1VUInZ0T7zMS4M",
+          "mode": "list",
+          "cachedResultName": "LinkedInProfiles",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-8mqlWDUX-hzxg6ZH4qDm-lfSdKmW1VUInZ0T7zMS4M/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-8mqlWDUX-hzxg6ZH4qDm-lfSdKmW1VUInZ0T7zMS4M/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Job Title",
+              "displayName": "Job Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Linkeden",
+              "displayName": "Linkeden",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "job_title",
+              "displayName": "job_title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "linkedin_url",
+              "displayName": "linkedin_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1120,
+        -112
+      ],
+      "id": "1a0144c5-07cc-4801-9c7f-3cb0c54133a5",
+      "name": "Append row in sheet",
+      "alwaysOutputData": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "JBY3gb8IMrzm0tNd",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        896,
+        80
+      ],
+      "id": "3c0ad225-b7bd-4af9-8e11-92911551ff03",
+      "name": "Wait",
+      "webhookId": "65827230-adfb-42e2-bafd-4f336a6ee059"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        152
+      ],
+      "id": "2f3fe070-c4a5-4a77-a4f4-d27485f0fedb"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        672,
+        80
+      ],
+      "id": "5f82570e-d47c-4d10-9286-266757dc132d",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "bc778d62-eefc-497e-96d6-8847714f67cc",
+              "leftValue": "={{$json[\"Linkeden\"]}}",
+              "rightValue": "Is Not Empty",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        -112
+      ],
+      "id": "423a37ba-6b84-4868-a694-31828280dd22",
+      "name": "If"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b88a3c16-258e-40b5-b369-9fcf17c23774",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d1fdfc7a0acd3cdf2c3352daea3a3d5111615e24c1cd6d2a730eef6bdb232e30"
+  },
+  "id": "O8wvPBcQasuB1DGL",
+  "tags": []
+}
